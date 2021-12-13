@@ -1,15 +1,22 @@
 package es.rico;
 
-import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
 
 public class Activitat23 {
+
     static Scanner scanner;
+    static Random generadorAleatori = new Random();
     public static void main(String[] args) {
         scanner = new Scanner(System.in);
+        empezarLoteria();
+
+    }
+    public static void empezarLoteria(){
         mostrarInicio();
-        int [] apuesta = generarApuesta();
+        int numApuestas = pedirApuesta();
+        generarBoleto(numApuestas);
+        mostrarTotalPago(numApuestas);
     }
 
     /**
@@ -18,28 +25,40 @@ public class Activitat23 {
     public static void mostrarInicio(){
         System.out.println("----- GENERADOR DE APUESTAS LOTERIA 2020 -----");
     }
+    public static void generarBoleto(int apuestas){
+        for (int i = 1; i <= apuestas ; i++) {
+            System.out.println("----- Apuesta " + i + " ----");
+            int [] apuesta = generarApuesta();
+            ordenarApuesta(apuesta);
+            mostrarApuesta(apuesta);
+        }
+
+    }
 
     /**
      * Genera una apuesta, lo llamaremos tantas veces como apuestas
      * quiera jugar el usuario
      **/
     public static int[] generarApuesta(){
-        int numApuesta = pedirApuesta();
-        Random generadorAleatori = new Random();
-        int [] listado = new int[6];
-        for (int i = 0; i <= numApuesta; i++) {
-            listado[i] = generadorAleatori.nextInt(50);
+        int [] apuesta = new int[6];
+
+        for (int i = 0; i < apuesta.length; i++) {
+            int numeroAleatorio = generadorAleatori.nextInt(50);
+            if (esRepetit(apuesta, numeroAleatorio)) {
+                i--;
+            }else {
+                apuesta[i] = numeroAleatorio;
+            }
         }
-        return listado;
+        return apuesta;
     }
     /**
      * Muestra la @apuesta en el formato de salida específico
      **/
     public static void mostrarApuesta(int[] apuesta){
-
-        for (int i = 0; i <= 4; i++) {
-
-        }
+        System.out.println("+----+----+----+----+----+----+");
+        System.out.printf("%-1s %02d %-1s %02d %-1s %02d %-1s %02d %-1s %02d %-1s %02d %-1s\n", "|", apuesta[0], "|", apuesta[1], "|", apuesta[2], "|", apuesta[3], "|", apuesta[4], "|", apuesta[5],"|");
+        System.out.println("+----+----+----+----+----+----+\n");
     }
     /**
      * Muestra el total a pagar por @numeroApuestas
@@ -47,29 +66,25 @@ public class Activitat23 {
     public static void mostrarTotalPago(int numeroApuestas) {
         System.out.println("---- Total a Pagar ----");
         System.out.println("+----+----+----+----+----+");
-        System.out.printf("%-3s %-3s %-3s %-3d %-3s\n", "|", "Apuestas: ", "|", numeroApuestas, "|");
+        System.out.printf("%-4s %-4s %-4s %-3d %-4s\n", "|", "Apuestas: ", "|", numeroApuestas, "|");
         System.out.println("+----+----+----+----+----+");
-        switch (numeroApuestas) {
-            case (1):
-                System.out.printf("%-3s %-3s %-3s %-3f€ %-3s\n", "|", "A Pagar: ", "|", numeroApuestas + 0.25, "|");
-                break;
-            case (2):
-            case (3):
-                System.out.printf("%-3s %-3s %-3s %-3f€ %-3s\n", "|", "A Pagar: ", "|", (numeroApuestas * 1.5), "|");
-                break;
-            case (4):
-            case (5):
-                System.out.printf("%-3s %-3s %-3s %-3d€ %-3s\n", "|", "A Pagar: ", "|", (numeroApuestas * 2), "|");
-                break;
-            case (6):
-            case (7):
-                System.out.printf("%-3s %-3s %-3s %-3d€ %-3s\n", "|", "A Pagar: ", "|", (12), "|");
-                break;
-            case (8):
-                System.out.printf("%-3s %-3s %-3s %-3d€ %-3s\n", "|", "A Pagar: ", "|", (18), "|");
-                break;
+        System.out.printf("%-4s %-4s %-3s %.2f€ %-4s\n", "|", "A Pagar: ", "|", calcularPago(numeroApuestas), "|");
+        System.out.println("+----+----+----+----+----+");
+
         }
-        System.out.println("+----+----+----+----+----+");
+
+    public static float calcularPago(int numeroApuesta) {
+        if (numeroApuesta == 8){
+            return 18;
+        }else if (numeroApuesta == 6 || numeroApuesta == 7){
+            return 12;
+        }else if (numeroApuesta == 4 || numeroApuesta == 5){
+            return  numeroApuesta * 2;
+        }else if (numeroApuesta == 2 || numeroApuesta == 3){
+            return numeroApuesta * 2;
+        }else {
+            return 1.25F;
+        }
     }
 
 
@@ -81,4 +96,25 @@ public class Activitat23 {
         System.out.print("\nCuantas apuestas quieres realizar: ");
         return scanner.nextInt();
     }
+    public static boolean esRepetit(int [] apuesta  , int numeroAleatorio){
+        for (int i = 0; i < apuesta.length; i++) {
+            if (apuesta[i] == numeroAleatorio){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static void ordenarApuesta(int [] myArray){
+        for (int i = 0; i < myArray.length - 1 ; i++) {
+            for (int j = i + 1; j < myArray.length; j++) {
+                if (myArray[j] < myArray[i]){
+                    int aux = myArray[i];
+                    myArray[i] = myArray[j];
+                    myArray[j] = aux;
+                }
+            }
+        }
+    }
 }
+
